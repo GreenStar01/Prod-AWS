@@ -1,7 +1,7 @@
 provider "aws"{
     region = "us-east-1"
-    access_key = ""
-    secret_key = ""
+    #access_key = "AKIAR4EREHREPRV6NA75"
+    #secret_key = "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"
 }
 
 
@@ -39,7 +39,7 @@ resource "aws_route_table" "prod-RT"{
 resource "aws_subnet" "prod-public-subnet"{
 
     vpc_id = aws_vpc.prod-vpc.id
-    cidr_block = "10.0.1.0/24"
+    cidr_block = var.subnet_prefix[0]
     availability_zone = "us-east-1a"
 
     tags = {
@@ -47,6 +47,23 @@ resource "aws_subnet" "prod-public-subnet"{
     }
 }
 
+variable "subnet_prefix"{
+        description = "Cidr block for the subnet"
+        #default var.subnet-prefix 
+        #type = string
+
+    }
+
+resource "aws_subnet" "dev-public-subnet"{
+
+    vpc_id = aws_vpc.prod-vpc.id
+    cidr_block = var.subnet_prefix[1]
+    availability_zone = "us-east-1a"
+
+    tags = {
+        Name = "Prod-Subnet"
+    }
+}
 resource "aws_route_table_association" "prod-assc" {
 
     subnet_id = aws_subnet.prod-public-subnet.id
@@ -99,7 +116,7 @@ resource "aws_security_group" "prod-web_inbound" {
 
 resource "aws_network_interface" "prod-nic" {
     subnet_id = aws_subnet.prod-public-subnet.id
-    private_ips = ["10.0.1.50"]
+    private_ips = ["10.0..50"]
     security_groups = [aws_security_group.prod-web_inbound.id]
 }
 
@@ -120,7 +137,6 @@ resource "aws_instance" "Prod-web"{
         network_interface_id = aws_network_interface.prod-nic.id
     }
    
-    
     key_name = "DemoKP"
 
     user_data = <<-EOF
