@@ -1,3 +1,10 @@
+variable "environment_name" {
+    description = "Deployment environment (Dev/Stage/Production)"
+    type = string
+    default = "dev"
+}
+
+
 variable "ami" {
     description = "EC-2 Instance Large Compute"
     type = string
