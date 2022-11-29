@@ -1,3 +1,12 @@
+terraform {
+    backend "remote" {
+        organization = "DevOps"
+        workspaces {
+          name = "Demo-Practice"
+        }
+      
+    }
+
 provider "aws"{
     region = "us-east-1"
     #access_key = "AKIAR4EREHREPRV6NA75"
@@ -10,6 +19,11 @@ resource "aws_vpc" "prod-vpc"{
     tags = {
 
         Name = "production"
+        
+    }         #Create a new resource before destroying this one
+    lifecycle {
+        create_before_destroy = true
+        prevent_destroy = true
     }
 }
 
@@ -20,15 +34,16 @@ resource "aws_internet_gateway" "prod-gw"{
 
 resource "aws_route_table" "prod-RT"{
     vpc_id = aws_vpc.prod-vpc.id
-
+    
+    
     route {
         cidr_block = "0.0.0.0/0"
         gateway_id = aws_internet_gateway.prod-gw.id
     }
 
     route {
-    ipv6_cidr_block        = "::/0"
-    gateway_id = aws_internet_gateway.prod-gw.id
+        ipv6_cidr_block = "::/0"
+        gateway_id = aws_internet_gateway.prod-gw.id
   }
 
     tags = {
