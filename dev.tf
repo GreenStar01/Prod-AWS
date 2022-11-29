@@ -66,6 +66,15 @@ resource "aws_instance" "web-serv-2"{
     }
 }
 
+resource "aws_instance" "server"{
+    count = 4
+    ami = var.ami
+    instance_type = var.instance_type
+
+    tags = {
+        Name = "Server ${count.index}"
+    }
+}
 resource "aws_s3_bucket" "bucket"{
 
     bucket= "devops-demo-bucket"
