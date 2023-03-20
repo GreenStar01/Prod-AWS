@@ -40,7 +40,7 @@ resource "aws_dynamodb_table" "terraform_locks" {
 resource "aws_instance" "web-serv"{
     ami =   "ami-011899242bb902164"
     instance_type = "t2.micro"
-    security_groups = [""]
+    security_groups = ["aws_security_group.instance.id"]
     user_data = <<-EOF
             #!/bin/bash
             echo "Web-server-1" > index.html
@@ -54,11 +54,15 @@ resource "aws_instance" "web-serv"{
 resource "aws_instance" "web-serv-2"{
     ami =   "ami-011899242bb902164"
     instance_type = "t2.micro"
-    security_groups = [""]
+    security_groups = ["aws_security_group.instance.id"]
     user_data = <<-EOF
-            #!/bin/bash
-            echo "Web-server-2" > index.html
-            python3 -m http.server 8080 &
+            #! /bin/bash
+            apt-get update
+            apt-get install -y apache2
+            systemctl start apache2
+            systemctl enable apache2
+            echo "<h1>Deployed Machine via Terraform</h1>" | sudo tee /var/www/html/index.html
+
 
             EOF
     tags = {
@@ -240,4 +244,9 @@ resource "aws-db_instance" "db_instance" {
     username = "foo"
     password = "foobarbaz"
     skip-final_snapshot = true
-}                                                                                                                       =]
+}    
+
+resource "aws_key_pair" "ec2-key"{
+    key_name = "mykey"
+    public_key = "ssh-rsa AAADW44344I499398458"
+}                                                                                                                   =]
